@@ -1,10 +1,10 @@
 {
 	"apiVersion": 2,
-	"name": "mikeforscutt-team-members",
-	"title": "Team Mmebers",
+	"name": "mikeforscutt/team-members",
+	"title": "Team Members",
 	"category": "media",
 	"icon": "admin-users",
-	"description": "A Team members grid",
+	"description": "A team members grid.",
 	"keywords": ["Team", "Members", "Grid"],
 	"supports": {
 		"html": false

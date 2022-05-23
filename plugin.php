@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       Team Members
- * Description:       A Team members grid
+ * Description:       A team members grid.
  * Requires at least: 5.7
  * Requires PHP:      7.0
  * Version:           0.1.0
