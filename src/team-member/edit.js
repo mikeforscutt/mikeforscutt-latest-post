@@ -5,20 +5,62 @@ import {
 	MediaPlaceholder,
 	BlockControls,
 	MediaReplaceFlow,
+	InspectorControls,
+	store as blockEditorStore,
 } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
+import { useSelect } from '@wordpress/data';
 import { isBlobURL, revokeBlobURL } from '@wordpress/blob';
-import { Spinner, withNotices, ToolbarButton } from '@wordpress/components';
+import {
+	Spinner,
+	withNotices,
+	ToolbarButton,
+	PanelBody,
+	TextareaControl,
+	SelectControl,
+} from '@wordpress/components';
 
 function Edit({ attributes, setAttributes, noticeOperations, noticeUI }) {
 	const { name, bio, url, alt, id } = attributes;
 	const [blobURL, setBlobURL] = useState();
+
+	const imageObject = useSelect(
+		(select) => {
+			const { getMedia } = select('core');
+			return id ? getMedia(id) : null;
+		},
+		[id]
+	);
+
+	const imageSizes = useSelect((select) => {
+		return select(blockEditorStore).getSettings().imageSizes;
+	}, []);
+
+	const getImageSizeOptions = () => {
+		if (!imageObject) return [];
+		const options = [];
+		const sizes = imageObject.media_details.sizes;
+		for (const key in sizes) {
+			const size = sizes[key];
+			const imageSize = imageSizes.find((s) => s.slug === key);
+			if (imageSize) {
+				options.push({
+					label: imageSize.name,
+					value: size.source_url,
+				});
+			}
+		}
+		return options;
+	};
 
 	const onChangeName = (newName) => {
 		setAttributes({ name: newName });
 	};
 	const onChangeBio = (newBio) => {
 		setAttributes({ bio: newBio });
+	};
+	const onChangeAlt = (newAlt) => {
+		setAttributes({ alt: newAlt });
 	};
 	const onSelectImage = (image) => {
 		if (!image || !image.url) {
@@ -33,6 +75,9 @@ function Edit({ attributes, setAttributes, noticeOperations, noticeUI }) {
 			id: undefined,
 			alt: '',
 		});
+	};
+	const onChangeImageSize = (newURL) => {
+		setAttributes({ url: newURL });
 	};
 	const onUploadError = (message) => {
 		noticeOperations.removeAllNotices();
@@ -67,6 +112,29 @@ function Edit({ attributes, setAttributes, noticeOperations, noticeUI }) {
 
 	return (
 		<>
+			<InspectorControls>
+				<PanelBody title={__('Image Settings', 'team-members')}>
+					{id && (
+						<SelectControl
+							label={__('Image Size', 'team-members')}
+							options={getImageSizeOptions()}
+							value={url}
+							onChange={onChangeImageSize}
+						/>
+					)}
+					{url && !isBlobURL(url) && (
+						<TextareaControl
+							label={__('Alt Text', 'team-members')}
+							value={alt}
+							onChange={onChangeAlt}
+							help={__(
+								"Alternative text describes your image to people can't see it. Add a short description with its key details.",
+								'team-members'
+							)}
+						/>
+					)}
+				</PanelBody>
+			</InspectorControls>
 			{url && (
 				<BlockControls group="inline">
 					<MediaReplaceFlow
