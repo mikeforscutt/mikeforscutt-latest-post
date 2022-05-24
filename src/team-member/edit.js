@@ -1,4 +1,4 @@
-import { useEffect, useState } from '@wordpress/element';
+import { useEffect, useState, useRef } from '@wordpress/element';
 import {
 	useBlockProps,
 	RichText,
@@ -10,6 +10,7 @@ import {
 } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
+import { usePrevious } from '@wordpress/compose';
 import { isBlobURL, revokeBlobURL } from '@wordpress/blob';
 import {
 	Spinner,
@@ -18,11 +19,25 @@ import {
 	PanelBody,
 	TextareaControl,
 	SelectControl,
+	Icon,
+	Tooltip,
 } from '@wordpress/components';
 
-function Edit({ attributes, setAttributes, noticeOperations, noticeUI }) {
-	const { name, bio, url, alt, id } = attributes;
+function Edit({
+	attributes,
+	setAttributes,
+	noticeOperations,
+	noticeUI,
+	isSelected,
+}) {
+	const { name, bio, url, alt, id, socialLinks } = attributes;
 	const [blobURL, setBlobURL] = useState();
+	const [selectedLink, setSelectedLink] = useState();
+
+	const prevURL = usePrevious(url);
+	const prevIsSelected = usePrevious(isSelected);
+
+	const titleRef = useRef();
 
 	const imageObject = useSelect(
 		(select) => {
@@ -92,6 +107,13 @@ function Edit({ attributes, setAttributes, noticeOperations, noticeUI }) {
 		});
 	};
 
+	const addNewSocialItem = () => {
+		setAttributes({
+			socialLinks: [...socialLinks, { icon: 'wordpress', link: '' }],
+		});
+		setSelectedLink(socialLinks.length);
+	};
+
 	useEffect(() => {
 		if (!id && isBlobURL(url)) {
 			setAttributes({
@@ -109,6 +131,18 @@ function Edit({ attributes, setAttributes, noticeOperations, noticeUI }) {
 			setBlobURL();
 		}
 	}, [url]);
+
+	useEffect(() => {
+		if (url && !prevURL) {
+			titleRef.current.focus();
+		}
+	}, [url, prevURL]);
+
+	useEffect(() => {
+		if (prevIsSelected && !isSelected) {
+			setSelectedLink();
+		}
+	}, [isSelected, prevIsSelected]);
 
 	return (
 		<>
@@ -174,6 +208,7 @@ function Edit({ attributes, setAttributes, noticeOperations, noticeUI }) {
 					notices={noticeUI}
 				/>
 				<RichText
+					ref={titleRef}
 					placeholder={__('Member Name', 'team-member')}
 					tagName="h4"
 					onChange={onChangeName}
@@ -187,6 +222,50 @@ function Edit({ attributes, setAttributes, noticeOperations, noticeUI }) {
 					value={bio}
 					allowedFormats={[]}
 				/>
+
+				<div className="wp-block-mikeforscutt-team-member-social-links">
+					<ul>
+						{socialLinks.map((item, index) => {
+							return (
+								<li
+									key={index}
+									className={
+										selectedLink === index
+											? 'is-selected'
+											: null
+									}
+								>
+									<button
+										aria-label={__(
+											'Edit Social Link',
+											'team-members'
+										)}
+										onClick={() => setSelectedLink(index)}
+									>
+										<Icon icon={item.icon} />
+									</button>
+								</li>
+							);
+						})}
+						{isSelected && (
+							<li className="wp-block-mikeforscutt-team-member-add-icon-li">
+								<Tooltip
+									text={__('Add Social Link', 'team-members')}
+								>
+									<button
+										aria-label={__(
+											'Add Social Link',
+											'team-members'
+										)}
+										onClick={addNewSocialItem}
+									>
+										<Icon icon="plus" />
+									</button>
+								</Tooltip>
+							</li>
+						)}
+					</ul>
+				</div>
 			</div>
 		</>
 	);

@@ -114,8 +114,12 @@
 .wp-block-mikeforscutt-team-members > .block-editor-inner-blocks > .block-editor-block-list__layout > [data-type="mikeforscutt/team-member"] {
   margin: 10px;
 }
+.wp-block-mikeforscutt-team-members > .block-editor-inner-blocks > .block-editor-block-list__layout > [data-type="mikeforscutt/team-member"] .block-editor-media-placeholder {
+  margin-bottom: 20px;
+}
 .wp-block-mikeforscutt-team-members > .block-editor-inner-blocks > .block-editor-block-list__layout > [data-type="mikeforscutt/team-member"] .wp-block-mikeforscutt-team-member-img {
   position: relative;
+  margin-bottom: 20px;
 }
 .wp-block-mikeforscutt-team-members > .block-editor-inner-blocks > .block-editor-block-list__layout > [data-type="mikeforscutt/team-member"] .wp-block-mikeforscutt-team-member-img.is-loading img {
   opacity: 0.3;
@@ -140,6 +144,31 @@
   font-weight: 300;
   margin-bottom: 5px;
   margin-top: 5px;
+}
+.wp-block-mikeforscutt-team-members > .block-editor-inner-blocks > .block-editor-block-list__layout > [data-type="mikeforscutt/team-member"] .wp-block-mikeforscutt-team-member-social-links ul {
+  list-style: none;
+  padding: 0;
+  margin: 15px -5px 0;
+}
+.wp-block-mikeforscutt-team-members > .block-editor-inner-blocks > .block-editor-block-list__layout > [data-type="mikeforscutt/team-member"] .wp-block-mikeforscutt-team-member-social-links ul li {
+  display: inline-block;
+  margin: 5px;
+}
+.wp-block-mikeforscutt-team-members > .block-editor-inner-blocks > .block-editor-block-list__layout > [data-type="mikeforscutt/team-member"] .wp-block-mikeforscutt-team-member-social-links ul li span.dashicon {
+  color: #4e4e4e;
+}
+.wp-block-mikeforscutt-team-members > .block-editor-inner-blocks > .block-editor-block-list__layout > [data-type="mikeforscutt/team-member"] .wp-block-mikeforscutt-team-member-social-links ul li.is-selected {
+  outline: 2px solid #d028e3;
+}
+.wp-block-mikeforscutt-team-members > .block-editor-inner-blocks > .block-editor-block-list__layout > [data-type="mikeforscutt/team-member"] .wp-block-mikeforscutt-team-member-social-links ul li button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  margin: 0;
+}
+.wp-block-mikeforscutt-team-members > .block-editor-inner-blocks > .block-editor-block-list__layout > [data-type="mikeforscutt/team-member"] .wp-block-mikeforscutt-team-member-social-links ul li.wp-block-mikeforscutt-team-member-add-icon-li button {
+  outline: 1px dashed;
 }
 
 /*# sourceMappingURL=index.css.map*/
