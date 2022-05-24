@@ -3,10 +3,12 @@ import {
 	useBlockProps,
 	RichText,
 	MediaPlaceholder,
+	BlockControls,
+	MediaReplaceFlow,
 } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import { isBlobURL, revokeBlobURL } from '@wordpress/blob';
-import { Spinner, withNotices } from '@wordpress/components';
+import { Spinner, withNotices, ToolbarButton } from '@wordpress/components';
 
 function Edit({ attributes, setAttributes, noticeOperations, noticeUI }) {
 	const { name, bio, url, alt, id } = attributes;
@@ -37,6 +39,14 @@ function Edit({ attributes, setAttributes, noticeOperations, noticeUI }) {
 		noticeOperations.createErrorNotice(message);
 	};
 
+	const removeImage = () => {
+		setAttributes({
+			url: undefined,
+			alt: '',
+			id: undefined,
+		});
+	};
+
 	useEffect(() => {
 		if (!id && isBlobURL(url)) {
 			setAttributes({
@@ -56,42 +66,61 @@ function Edit({ attributes, setAttributes, noticeOperations, noticeUI }) {
 	}, [url]);
 
 	return (
-		<div {...useBlockProps()}>
+		<>
 			{url && (
-				<div
-					className={`wp-block-mikeforscutt-team-member-img${
-						isBlobURL(url) ? ' is-loading' : ''
-					}`}
-				>
-					<img src={url} alt={alt} />
-					{isBlobURL(url) && <Spinner />}
-				</div>
+				<BlockControls group="inline">
+					<MediaReplaceFlow
+						name={__('Replace Image', 'team-members')}
+						onSelect={onSelectImage}
+						onSelectURL={onSelectURL}
+						onError={onUploadError}
+						accept="image/*"
+						allowedTypes={['image']}
+						mediaId={id}
+						mediaURL={url}
+					/>
+					<ToolbarButton onClick={removeImage}>
+						{__('Remove Image', 'team-members')}
+					</ToolbarButton>
+				</BlockControls>
 			)}
-			<MediaPlaceholder
-				icon="admin-users"
-				onSelect={onSelectImage}
-				onSelectURL={onSelectURL}
-				onError={onUploadError}
-				accept="image/*"
-				allowedTypes={['image']}
-				disableMediaButtons={url}
-				notices={noticeUI}
-			/>
-			<RichText
-				placeholder={__('Member Name', 'team-member')}
-				tagName="h4"
-				onChange={onChangeName}
-				value={name}
-				allowedFormats={[]}
-			/>
-			<RichText
-				placeholder={__('Member Bio', 'team-member')}
-				tagName="p"
-				onChange={onChangeBio}
-				value={bio}
-				allowedFormats={[]}
-			/>
-		</div>
+			<div {...useBlockProps()}>
+				{url && (
+					<div
+						className={`wp-block-mikeforscutt-team-member-img${
+							isBlobURL(url) ? ' is-loading' : ''
+						}`}
+					>
+						<img src={url} alt={alt} />
+						{isBlobURL(url) && <Spinner />}
+					</div>
+				)}
+				<MediaPlaceholder
+					icon="admin-users"
+					onSelect={onSelectImage}
+					onSelectURL={onSelectURL}
+					onError={onUploadError}
+					accept="image/*"
+					allowedTypes={['image']}
+					disableMediaButtons={url}
+					notices={noticeUI}
+				/>
+				<RichText
+					placeholder={__('Member Name', 'team-member')}
+					tagName="h4"
+					onChange={onChangeName}
+					value={name}
+					allowedFormats={[]}
+				/>
+				<RichText
+					placeholder={__('Member Bio', 'team-member')}
+					tagName="p"
+					onChange={onChangeBio}
+					value={bio}
+					allowedFormats={[]}
+				/>
+			</div>
+		</>
 	);
 }
 
