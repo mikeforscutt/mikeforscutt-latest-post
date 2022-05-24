@@ -36,7 +36,7 @@ registerBlockType('mikeforscutt/team-member', {
 		url: {
 			type: 'string',
 			source: 'attribute',
-			selector: 'image',
+			selector: 'img',
 			attribute: 'src',
 		},
 	},

@@ -121,9 +121,6 @@ function save(_ref) {
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": function() { return /* binding */ Edit; }
-/* harmony export */ });
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
@@ -139,17 +136,23 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
 function Edit(_ref) {
   let {
     attributes,
-    setAttributes
+    setAttributes,
+    noticeOperations,
+    noticeUI
   } = _ref;
   const {
     name,
     bio,
     url,
-    alt
+    alt,
+    id
   } = attributes;
+  const [blobURL, setBlobURL] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)();
 
   const onChangeName = newName => {
     setAttributes({
@@ -180,6 +183,35 @@ function Edit(_ref) {
     });
   };
 
+  const onSelectURL = newURL => {
+    setAttributes({
+      url: newURL,
+      id: undefined,
+      alt: ''
+    });
+  };
+
+  const onUploadError = message => {
+    noticeOperations.removeAllNotices();
+    noticeOperations.createErrorNotice(message);
+  };
+
+  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    if (!id && (0,_wordpress_blob__WEBPACK_IMPORTED_MODULE_3__.isBlobURL)(url)) {
+      setAttributes({
+        url: undefined,
+        alt: ''
+      });
+    }
+  }, []);
+  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    if ((0,_wordpress_blob__WEBPACK_IMPORTED_MODULE_3__.isBlobURL)(url)) {
+      setBlobURL(url);
+    } else {
+      (0,_wordpress_blob__WEBPACK_IMPORTED_MODULE_3__.revokeBlobURL)(blobURL);
+      setBlobURL();
+    }
+  }, [url]);
   return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", (0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.useBlockProps)(), url && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: `wp-block-mikeforscutt-team-member-img${(0,_wordpress_blob__WEBPACK_IMPORTED_MODULE_3__.isBlobURL)(url) ? ' is-loading' : ''}`
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("img", {
@@ -188,10 +220,12 @@ function Edit(_ref) {
   }), (0,_wordpress_blob__WEBPACK_IMPORTED_MODULE_3__.isBlobURL)(url) && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_4__.Spinner, null)), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.MediaPlaceholder, {
     icon: "admin-users",
     onSelect: onSelectImage,
-    onSelectURL: val => console.log(val),
-    onError: err => console.log(err),
+    onSelectURL: onSelectURL,
+    onError: onUploadError,
     accept: "image/*",
-    allowedTypes: ['image']
+    allowedTypes: ['image'],
+    disableMediaButtons: url,
+    notices: noticeUI
   }), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.RichText, {
     placeholder: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Member Name', 'team-member'),
     tagName: "h4",
@@ -206,6 +240,8 @@ function Edit(_ref) {
     allowedFormats: []
   }));
 }
+
+/* harmony default export */ __webpack_exports__["default"] = ((0,_wordpress_components__WEBPACK_IMPORTED_MODULE_4__.withNotices)(Edit));
 
 /***/ }),
 
@@ -259,7 +295,7 @@ __webpack_require__.r(__webpack_exports__);
     url: {
       type: 'string',
       source: 'attribute',
-      selector: 'image',
+      selector: 'img',
       attribute: 'src'
     }
   },
@@ -291,9 +327,16 @@ function Save(_ref) {
   } = _ref;
   const {
     name,
-    bio
+    bio,
+    url,
+    alt,
+    id
   } = attributes;
-  return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.useBlockProps.save(), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.RichText.Content, {
+  return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.useBlockProps.save(), url && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("img", {
+    src: url,
+    alt: alt,
+    className: id ? `wp-image-${id}` : null
+  }), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.RichText.Content, {
     tagName: "h4",
     value: name
   }), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.RichText.Content, {
